@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agape Scents | Luxury Fragrances & Artisanal Perfumes</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Playfair Display & Montserrat -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            gold: {
+              100: '#FAF4E8',
+              300: '#E5C07B',
+              500: '#D4AF37',
+              600: '#AA8828',
+              800: '#665012'
+            },
+            noir: '#0D0D0D',
+            charcoal: '#1A1A1A',
+            cream: '#FAF8F5'
+          },
+          fontFamily: {
+            serif: ['Playfair Display', 'serif'],
+            sans: ['Montserrat', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    html { scroll-behavior: smooth; }
+    
+    /* Background Canvas Styles */
+    .bg-sequence-viewport {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      overflow: hidden;
+      background-color: #0d0d11;
+    }
+
+    .sequence-player {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    .frame {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      will-change: opacity;
+    }
+
+    .frame.active {
+      opacity: 1;
+    }
+
+    /* Transparency & Glassmorphism Utilities */
+    .bg-glass { 
+      backdrop-filter: blur(12px); 
+      background: rgba(13, 13, 13, 0.75); 
+    }
+    
+    .bg-glass-card { 
+      backdrop-filter: blur(8px); 
+      background: rgba(26, 26, 26, 0.45); 
+    }
+
+    .bg-glass-card-dark { 
+      backdrop-filter: blur(8px); 
+      background: rgba(13, 13, 13, 0.55); 
+    }
+
+    .gold-gradient { 
+      background: linear-gradient(135deg, #BF953F 0%, #FCF6BA 25%, #B38728 50%, #FBF5B7 75%, #AA771C 100%); 
+    }
+    
+    .gold-text { 
+      background: linear-gradient(135deg, #D4AF37, #FFF5C0, #AA8828); 
+      -webkit-background-clip: text; 
+      -webkit-text-fill-color: transparent; 
+    }
+  </style>
+</head>
+<body class="bg-noir text-stone-200 font-sans antialiased">
+
+  <!-- DYNAMIC BACKGROUND ANIMATION FRAME WORK -->
+  <div class="bg-sequence-viewport">
+    <div class="sequence-player" id="player">
+      <!-- Frames inserted dynamically -->
+    </div>
+    <!-- Dark tint overlay to ensure high readability of text over background -->
+    <div class="absolute inset-0 bg-black/40 pointer-events-none"></div>
+  </div>
+
+  <!-- MAIN SCROLL CONTAINER FOR PAGE CONTENT -->
+  <div class="relative z-10" id="scrollContainer">
+
+    <!-- NAVIGATION -->
+    <nav class="fixed top-0 left-0 right-0 z-40 bg-glass border-b border-gold-500/20 px-6 py-4 transition-all">
+      <div class="max-w-7xl mx-auto flex items-center justify-between">
+        <a href="#home" class="font-serif text-2xl font-bold tracking-widest gold-text flex items-center gap-2">
+          <i data-lucide="sparkles" class="text-gold-500"></i> AGAPE SCENTS
+        </a>
+        
+        <div class="hidden md:flex items-center space-x-8 text-xs uppercase tracking-widest">
+          <a href="#home" class="hover:text-gold-500 transition-colors">Home</a>
+          <a href="#shop" class="hover:text-gold-500 transition-colors">Collection</a>
+          <a href="#services" class="hover:text-gold-500 transition-colors">Services</a>
+          <a href="#about" class="hover:text-gold-500 transition-colors">About Us</a>
+          <a href="#contact" class="hover:text-gold-500 transition-colors">Contact</a>
+        </div>
+
+        <button id="open-cart-btn" class="relative p-2 text-gold-500 hover:text-gold-300 transition-colors flex items-center gap-2 border border-gold-500/30 rounded-full px-4 bg-noir/50 backdrop-blur-sm">
+          <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+          <span class="text-xs uppercase font-medium tracking-wider">Cart</span>
+          <span id="cart-count" class="bg-gold-500 text-noir text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center -mr-1">0</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section id="home" class="relative min-h-screen flex items-center justify-center pt-24 pb-12 px-6">
+      <div class="relative z-10 max-w-4xl mx-auto text-center space-y-6 bg-glass-card p-8 md:p-12 border border-gold-500/20 rounded-xl">
+        <span class="text-gold-500 text-xs uppercase tracking-[0.3em] font-semibold border border-gold-500/30 px-4 py-1.5 rounded-full inline-block bg-noir/40">Artisanal & Niche Perfumery</span>
+        <h1 class="font-serif text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-tight">
+          Discover Your <span class="gold-text">Signature Essence</span>
+        </h1>
+        <p class="text-stone-300 max-w-2xl mx-auto text-sm md:text-base leading-relaxed">
+          Explore our curated collection of luxury fragrances. Select your favorite scents and submit your inquiry order directly for personalized service and delivery.
+        </p>
+        <div class="pt-4 flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="#shop" class="gold-gradient text-noir font-semibold px-8 py-3.5 rounded-none tracking-widest text-xs uppercase hover:opacity-90 transition-opacity">
+            Explore Collection
+          </a>
+          <a href="#services" class="border border-gold-500/40 text-gold-500 font-semibold px-8 py-3.5 rounded-none tracking-widest text-xs uppercase hover:bg-gold-500/10 transition-colors bg-noir/40">
+            Bespoke Consultation
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- SHOP / CATALOG SECTION -->
+    <section id="shop" class="py-20 px-6 max-w-7xl mx-auto">
+      <div class="bg-glass-card p-6 md:p-10 border border-stone-800/80 rounded-xl">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 border-b border-stone-800/80 pb-6">
+          <div>
+            <span class="text-gold-500 text-xs uppercase tracking-widest">Our Catalogue</span>
+            <h2 class="font-serif text-3xl md:text-4xl font-bold mt-1">Available Fragrances</h2>
+          </div>
+          <!-- Filters -->
+          <div class="flex gap-2 mt-4 md:mt-0 overflow-x-auto pb-2 md:pb-0">
+            <button onclick="filterCatalog('All')" class="filter-btn active bg-gold-500 text-noir text-xs font-semibold px-4 py-2 uppercase tracking-wider transition-all">All</button>
+            <button onclick="filterCatalog('Woody')" class="filter-btn bg-noir/60 text-stone-300 hover:text-gold-500 text-xs font-semibold px-4 py-2 uppercase tracking-wider transition-all">Woody</button>
+            <button onclick="filterCatalog('Floral')" class="filter-btn bg-noir/60 text-stone-300 hover:text-gold-500 text-xs font-semibold px-4 py-2 uppercase tracking-wider transition-all">Floral</button>
+            <button onclick="filterCatalog('Fresh')" class="filter-btn bg-noir/60 text-stone-300 hover:text-gold-500 text-xs font-semibold px-4 py-2 uppercase tracking-wider transition-all">Fresh</button>
+            <button onclick="filterCatalog('Oriental')" class="filter-btn bg-noir/60 text-stone-300 hover:text-gold-500 text-xs font-semibold px-4 py-2 uppercase tracking-wider transition-all">Oriental</button>
+          </div>
+        </div>
+
+        <!-- Product Grid -->
+        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- Products render dynamically via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- SERVICES SECTION -->
+    <section id="services" class="py-20 px-6 max-w-7xl mx-auto">
+      <div class="bg-glass-card-dark p-8 md:p-12 border border-stone-800/80 rounded-xl">
+        <div class="text-center max-w-2xl mx-auto mb-16">
+          <span class="text-gold-500 text-xs uppercase tracking-widest">Elevated Experience</span>
+          <h2 class="font-serif text-3xl md:text-4xl font-bold mt-2">Bespoke Fragrance Services</h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="bg-noir/50 backdrop-blur-sm p-8 border border-stone-800/80 hover:border-gold-500/40 transition-colors text-center space-y-4 rounded-lg">
+            <div class="w-12 h-12 rounded-full bg-gold-500/10 text-gold-500 flex items-center justify-center mx-auto">
+              <i data-lucide="compass" class="w-6 h-6"></i>
+            </div>
+            <h3 class="font-serif text-xl font-bold">Fragrance Consultation</h3>
+            <p class="text-stone-300 text-sm leading-relaxed">Not sure what fits your style? Book a 1-on-1 session with our perfumers to curate your custom scent profile.</p>
+          </div>
+
+          <div class="bg-noir/50 backdrop-blur-sm p-8 border border-stone-800/80 hover:border-gold-500/40 transition-colors text-center space-y-4 rounded-lg">
+            <div class="w-12 h-12 rounded-full bg-gold-500/10 text-gold-500 flex items-center justify-center mx-auto">
+              <i data-lucide="gift" class="w-6 h-6"></i>
+            </div>
+            <h3 class="font-serif text-xl font-bold">Custom Gift Packaging</h3>
+            <p class="text-stone-300 text-sm leading-relaxed">Elevate your present with hand-calligraved wax seals, premium ribbon wrappings, and personalized note cards.</p>
+          </div>
+
+          <div class="bg-noir/50 backdrop-blur-sm p-8 border border-stone-800/80 hover:border-gold-500/40 transition-colors text-center space-y-4 rounded-lg">
+            <div class="w-12 h-12 rounded-full bg-gold-500/10 text-gold-500 flex items-center justify-center mx-auto">
+              <i data-lucide="layers" class="w-6 h-6"></i>
+            </div>
+            <h3 class="font-serif text-xl font-bold">Event & Corporate Orders</h3>
+            <p class="text-stone-300 text-sm leading-relaxed">We cater bespoke mini decants and full-sized luxury gifts for weddings, anniversaries, and high-level corporate events.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT US SECTION -->
+    <section id="about" class="py-20 px-6 max-w-7xl mx-auto">
+      <div class="bg-glass-card p-8 md:p-12 border border-stone-800/80 rounded-xl">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div class="relative">
+            <img src="https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?q=80&w=1000" alt="Perfume crafting" class="w-full h-[450px] object-cover border border-stone-800 rounded-lg">
+            <div class="absolute -bottom-6 -right-6 hidden sm:block bg-noir/90 backdrop-blur-md p-6 border border-gold-500/30 max-w-xs rounded-lg">
+              <p class="font-serif text-2xl font-bold gold-text">100%</p>
+              <p class="text-xs text-stone-300 uppercase tracking-wider mt-1">Authentic & Pure Scent Concentrates</p>
+            </div>
+          </div>
+          <div class="space-y-6">
+            <span class="text-gold-500 text-xs uppercase tracking-widest">Our Legacy</span>
+            <h2 class="font-serif text-3xl md:text-4xl font-bold leading-tight">Crafting Memories Through Olfactory Excellence</h2>
+            <p class="text-stone-300 text-sm leading-relaxed">
+              At Agape Scents, we believe perfume is the most intense form of memory. Our collection features rare artisanal blends sourced directly from master perfumers across Grasse, Paris, and Dubai.
+            </p>
+            <p class="text-stone-300 text-sm leading-relaxed">
+              Instead of mass automated checkouts, we operate on an intimate inquiry model. When you request a bottle, our boutique team reviews your order, verifies availability, and assists with personal delivery logistics directly.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT SECTION -->
+    <section id="contact" class="py-20 px-6 max-w-7xl mx-auto">
+      <div class="bg-glass-card-dark p-8 md:p-12 border border-stone-800/80 rounded-xl">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          <div class="space-y-6 lg:col-span-1">
+            <span class="text-gold-500 text-xs uppercase tracking-widest">Get In Touch</span>
+            <h2 class="font-serif text-3xl font-bold">Visit Our Boutique</h2>
+            <p class="text-stone-300 text-sm">Have questions before placing your order request? Reach out to us directly through any of our channels.</p>
+            
+            <div class="space-y-4 pt-4 text-sm">
+              <div class="flex items-center gap-3 text-stone-300">
+                <i data-lucide="map-pin" class="text-gold-500 w-5 h-5"></i>
+                <span>12 Boulevard Avenue, Perfume District</span>
+              </div>
+              <div class="flex items-center gap-3 text-stone-300">
+                <i data-lucide="phone" class="text-gold-500 w-5 h-5"></i>
+                <span>+234 (0) 812 345 6789</span>
+              </div>
+              <div class="flex items-center gap-3 text-stone-300">
+                <i data-lucide="mail" class="text-gold-500 w-5 h-5"></i>
+                <span>orders@agapescents.com</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="lg:col-span-2 bg-noir/50 backdrop-blur-sm p-8 border border-stone-800/80 rounded-lg">
+            <h3 class="font-serif text-xl font-bold mb-6">Send Us a General Inquiry</h3>
+            <form class="space-y-4" onsubmit="event.preventDefault(); alert('Thank you for contacting Agape Scents. We will respond shortly!');">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input type="text" placeholder="Your Name" class="bg-noir/70 border border-stone-800/80 p-3 text-sm focus:border-gold-500 outline-none w-full text-stone-200 rounded">
+                <input type="email" placeholder="Email Address" class="bg-noir/70 border border-stone-800/80 p-3 text-sm focus:border-gold-500 outline-none w-full text-stone-200 rounded">
+              </div>
+              <textarea rows="4" placeholder="Your Message..." class="bg-noir/70 border border-stone-800/80 p-3 text-sm focus:border-gold-500 outline-none w-full text-stone-200 rounded"></textarea>
+              <button type="submit" class="gold-gradient text-noir font-bold px-6 py-3 text-xs uppercase tracking-wider hover:opacity-90 transition-opacity">Send Message</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-8 border-t border-stone-800/80 bg-noir/80 backdrop-blur-md text-center text-xs text-stone-400">
+      <p>&copy; 2026 Agape Scents. All rights reserved. Designed for Luxury Fragrance Enthusiasts.</p>
+    </footer>
+
+  </div>
+
+  <!-- CART & INQUIRY SLIDE-OVER MODAL -->
+  <div id="cart-modal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden transition-opacity">
+    <!-- Faintly transparent & darker cart overlay panel -->
+    <div class="fixed inset-y-0 right-0 w-full max-w-md bg-noir/85 backdrop-blur-md border-l border-stone-800/80 flex flex-col justify-between p-6 overflow-y-auto">
+      
+      <div>
+        <!-- Cart Header -->
+        <div class="flex items-center justify-between pb-6 border-b border-stone-800/80">
+          <h2 class="font-serif text-xl font-bold flex items-center gap-2">
+            <i data-lucide="shopping-bag" class="text-gold-500"></i> Your Selected Scents
+          </h2>
+          <button id="close-cart-btn" class="text-stone-400 hover:text-white">
+            <i data-lucide="x" class="w-6 h-6"></i>
+          </button>
+        </div>
+
+        <!-- Cart Items List -->
+        <div id="cart-items-container" class="py-6 space-y-4">
+          <!-- Dynamically filled -->
+        </div>
+      </div>
+
+      <!-- Cart Checkout Form Section -->
+      <div id="cart-checkout-section" class="border-t border-stone-800/80 pt-6 space-y-4">
+        <div class="flex justify-between items-center text-lg font-serif">
+          <span>Estimated Total:</span>
+          <span id="cart-total-price" class="font-bold gold-text">$0.00</span>
+        </div>
+
+        <!-- CUSTOMER DETAILS: Kept fully opaque and solid -->
+        <div id="checkout-form-wrapper" class="hidden space-y-3 pt-2 bg-charcoal p-4 border border-stone-700/80 rounded-lg shadow-2xl">
+          <h3 class="text-xs font-semibold uppercase tracking-widest text-gold-500">Customer Details</h3>
+          <input type="text" id="cust-name" placeholder="Full Name *" required class="w-full bg-noir border border-stone-700 p-2.5 text-xs text-stone-200 focus:border-gold-500 outline-none rounded">
+          <input type="tel" id="cust-phone" placeholder="Phone Number / WhatsApp *" required class="w-full bg-noir border border-stone-700 p-2.5 text-xs text-stone-200 focus:border-gold-500 outline-none rounded">
+          <input type="email" id="cust-email" placeholder="Email Address *" required class="w-full bg-noir border border-stone-700 p-2.5 text-xs text-stone-200 focus:border-gold-500 outline-none rounded">
+          <textarea id="cust-address" placeholder="Delivery Address *" rows="2" required class="w-full bg-noir border border-stone-700 p-2.5 text-xs text-stone-200 focus:border-gold-500 outline-none rounded"></textarea>
+          
+          <div class="flex gap-2 pt-2">
+            <button onclick="submitOrderViaEmail()" class="w-full gold-gradient text-noir font-bold py-3 text-xs uppercase tracking-wider hover:opacity-90 flex items-center justify-center gap-2 rounded">
+              <i data-lucide="mail" class="w-4 h-4"></i> Submit via Email
+            </button>
+            <button onclick="submitOrderViaWhatsApp()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 text-xs uppercase tracking-wider flex items-center justify-center gap-2 rounded">
+              <i data-lucide="message-square" class="w-4 h-4"></i> WhatsApp
+            </button>
+          </div>
+        </div>
+
+        <button id="proceed-btn" onclick="toggleCheckoutForm()" class="w-full gold-gradient text-noir font-bold py-3 text-xs uppercase tracking-wider hover:opacity-90 rounded">
+          Proceed to Order Details
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    /* -------------------------------------------------------------
+       1. BACKGROUND SCROLL ANIMATION SYSTEM
+       ------------------------------------------------------------- */
+    // Change `frameCount` to any number of images you have available
+    const frameCount = 300; 
+    const targetFPS = 30; // Runs at 1/30 second per frame
+    const pixelsPerSecond = 800; // Scroll distance scaling factor
+
+    const totalDurationSeconds = frameCount / targetFPS; 
+    const totalScrollDistance = totalDurationSeconds * pixelsPerSecond;
+
+    const player = document.getElementById('player');
+    const scrollContainer = document.getElementById('scrollContainer');
+    
+    // Set content scroll height based on frame sequence length
+    scrollContainer.style.minHeight = `${totalScrollDistance + window.innerHeight}px`;
+
+    const frames = [];
+
+    const pad = (num, size) => {
+      let s = num + "";
+      while (s.length < size) s = "0" + s;
+      return s;
+    };
+
+    // Configure image naming convention and path here
+    const imageFolderPath = './'; 
+    const imagePrefix = 'ezgif-frame-';
+    const imageExtension = '.jpg';
+
+    // Preload & Append Image Frames
+    for (let i = 1; i <= frameCount; i++) {
+      const img = document.createElement('img');
+      img.src = `${imageFolderPath}${imagePrefix}${pad(i, 3)}${imageExtension}`;
+      img.alt = `Frame ${i}`;
+      img.className = `frame ${i === 1 ? 'active' : ''}`;
+      
+      player.appendChild(img);
+      frames.push(img);
+    }
+
+    let currentFrameIndex = 0;
+
+    function updateSequence() {
+      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const currentScroll = window.scrollY;
+
+      let progress = Math.max(0, Math.min(1, currentScroll / scrollHeight));
+
+      let frameIndex = Math.floor(progress * frameCount);
+      if (frameIndex >= frameCount) frameIndex = frameCount - 1;
+
+      if (frameIndex !== currentFrameIndex && frames[frameIndex]) {
+        frames[currentFrameIndex].classList.remove('active');
+        frames[frameIndex].classList.add('active');
+        currentFrameIndex = frameIndex;
+      }
+    }
+
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          updateSequence();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+
+    /* -------------------------------------------------------------
+       2. AGAPE SCENTS SHOP LOGIC
+       ------------------------------------------------------------- */
+    const products = [
+      {
+        id: 1,
+        name: "Oud Royale",
+        category: "Woody",
+        price: 220,
+        volume: "100ml Eau de Parfum",
+        notes: "Agarwood, Amber, Vanilla, Rose",
+        image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?q=80&w=600"
+      },
+      {
+        id: 2,
+        name: "Velvet Rose & Bergamot",
+        category: "Floral",
+        price: 185,
+        volume: "100ml Extraits de Parfum",
+        notes: "Damask Rose, Bergamot, Musk",
+        image: "https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?q=80&w=600"
+      },
+      {
+        id: 3,
+        name: "Citrus Horizon",
+        category: "Fresh",
+        price: 150,
+        volume: "75ml Eau de Toilette",
+        notes: "Sicilian Lemon, Neroli, Cedarwood",
+        image: "https://images.unsplash.com/photo-1615397349754-cfa2066a298e?q=80&w=600"
+      },
+      {
+        id: 4,
+        name: "Ambre Saffron",
+        category: "Oriental",
+        price: 240,
+        volume: "100ml Eau de Parfum",
+        notes: "Saffron, Warm Amber, Jasmine, Fir",
+        image: "https://images.unsplash.com/photo-1547887537-6158d64c35b3?q=80&w=600"
+      },
+      {
+        id: 5,
+        name: "Noir Vetiver",
+        category: "Woody",
+        price: 195,
+        volume: "100ml Eau de Parfum",
+        notes: "Haitian Vetiver, Grapefruit, Cardamom",
+        image: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?q=80&w=600"
+      },
+      {
+        id: 6,
+        name: "Jasmine Mystère",
+        category: "Floral",
+        price: 175,
+        volume: "50ml Pure Parfum",
+        notes: "Night-Blooming Jasmine, Sandalwood",
+        image: "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?q=80&w=600"
+      }
+    ];
+
+    let cart = [];
+
+    function renderProducts(items) {
+      const grid = document.getElementById('product-grid');
+      grid.innerHTML = items.map(p => `
+        <div class="bg-noir/60 backdrop-blur-sm border border-stone-800 hover:border-gold-500/40 transition-all flex flex-col group rounded-lg overflow-hidden">
+          <div class="relative overflow-hidden h-72">
+            <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+            <span class="absolute top-3 left-3 bg-noir/80 border border-gold-500/30 text-gold-500 text-[10px] uppercase font-semibold px-2.5 py-1 tracking-widest rounded">${p.category}</span>
+          </div>
+          <div class="p-6 flex-1 flex flex-col justify-between space-y-4">
+            <div>
+              <div class="flex justify-between items-start">
+                <h3 class="font-serif text-lg font-bold">${p.name}</h3>
+                <span class="font-serif text-gold-500 font-bold">$${p.price}</span>
+              </div>
+              <p class="text-xs text-stone-400 mt-1">${p.volume}</p>
+              <div class="mt-3 pt-3 border-t border-stone-800/60">
+                <p class="text-[11px] text-stone-300"><span class="text-gold-500 font-medium">Notes:</span> ${p.notes}</p>
+              </div>
+            </div>
+            <button onclick="addToCart(${p.id})" class="w-full border border-gold-500/50 text-gold-500 hover:bg-gold-500 hover:text-noir font-semibold py-2.5 text-xs uppercase tracking-wider transition-colors flex items-center justify-center gap-2 rounded">
+              <i data-lucide="plus" class="w-4 h-4"></i> Add to Order
+            </button>
+          </div>
+        </div>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    function filterCatalog(category) {
+      const buttons = document.querySelectorAll('.filter-btn');
+      buttons.forEach(btn => {
+        if(btn.innerText.toLowerCase() === category.toLowerCase()) {
+          btn.className = "filter-btn active bg-gold-500 text-noir text-xs font-semibold px-4 py-2 uppercase tracking-wider transition-all";
+        } else {
+          btn.className = "filter-btn bg-noir/60 text-stone-300 hover:text-gold-500 text-xs font-semibold px-4 py-2 uppercase tracking-wider transition-all";
+        }
+      });
+
+      if (category === 'All') {
+        renderProducts(products);
+      } else {
+        const filtered = products.filter(p => p.category === category);
+        renderProducts(filtered);
+      }
+    }
+
+    function addToCart(productId) {
+      const item = products.find(p => p.id === productId);
+      const existing = cart.find(c => c.id === productId);
+      if(existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({...item, qty: 1});
+      }
+      updateCartUI();
+      openCart();
+    }
+
+    function changeQty(productId, delta) {
+      const item = cart.find(c => c.id === productId);
+      if(item) {
+        item.qty += delta;
+        if(item.qty <= 0) {
+          cart = cart.filter(c => c.id !== productId);
+        }
+      }
+      updateCartUI();
+    }
+
+    function updateCartUI() {
+      const container = document.getElementById('cart-items-container');
+      const countBadge = document.getElementById('cart-count');
+      const totalPriceEl = document.getElementById('cart-total-price');
+
+      const totalItems = cart.reduce((acc, curr) => acc + curr.qty, 0);
+      const totalPrice = cart.reduce((acc, curr) => acc + (curr.price * curr.qty), 0);
+
+      countBadge.innerText = totalItems;
+      totalPriceEl.innerText = `$${totalPrice.toFixed(2)}`;
+
+      if(cart.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-12 text-stone-400 space-y-2">
+            <i data-lucide="shopping-bag" class="w-10 h-10 mx-auto stroke-1"></i>
+            <p class="text-sm">Your order list is empty.</p>
+          </div>
+        `;
+        document.getElementById('proceed-btn').classList.add('hidden');
+        document.getElementById('checkout-form-wrapper').classList.add('hidden');
+      } else {
+        container.innerHTML = cart.map(item => `
+          <div class="flex items-center justify-between bg-charcoal/80 p-3 border border-stone-800 rounded">
+            <div>
+              <h4 class="font-serif text-sm font-bold">${item.name}</h4>
+              <p class="text-xs text-gold-500">$${item.price} x ${item.qty}</p>
+            </div>
+            <div class="flex items-center gap-2 border border-stone-700 px-2 py-1 rounded">
+              <button onclick="changeQty(${item.id}, -1)" class="text-stone-400 hover:text-white text-xs px-1">-</button>
+              <span class="text-xs px-1">${item.qty}</span>
+              <button onclick="changeQty(${item.id}, 1)" class="text-stone-400 hover:text-white text-xs px-1">+</button>
+            </div>
+          </div>
+        `).join('');
+        if(document.getElementById('checkout-form-wrapper').classList.contains('hidden')) {
+          document.getElementById('proceed-btn').classList.remove('hidden');
+        }
+      }
+      lucide.createIcons();
+    }
+
+    function toggleCheckoutForm() {
+      document.getElementById('proceed-btn').classList.add('hidden');
+      document.getElementById('checkout-form-wrapper').classList.remove('hidden');
+    }
+
+    function getFormDetails() {
+      const name = document.getElementById('cust-name').value.trim();
+      const phone = document.getElementById('cust-phone').value.trim();
+      const email = document.getElementById('cust-email').value.trim();
+      const address = document.getElementById('cust-address').value.trim();
+
+      if (!name || !phone || !email || !address) {
+        alert("Please complete all required customer detail fields.");
+        return null;
+      }
+
+      const total = cart.reduce((acc, curr) => acc + (curr.price * curr.qty), 0);
+      const itemsList = cart.map(i => `${i.name} (x${i.qty}) - $${i.price * i.qty}`).join('\n');
+
+      return { name, phone, email, address, total, itemsList };
+    }
+
+    function submitOrderViaEmail() {
+      const details = getFormDetails();
+      if(!details) return;
+
+      const shopEmail = "orders@agapescents.com";
+      const subject = encodeURIComponent(`New Perfume Order Request from ${details.name}`);
+      const body = encodeURIComponent(
+        `Hello Agape Scents Team,\n\nI would like to place an inquiry order for the following items:\n\n${details.itemsList}\n\nTotal Estimated Amount: $${details.total}\n\n--- Customer Details ---\nName: ${details.name}\nPhone: ${details.phone}\nEmail: ${details.email}\nDelivery Address: ${details.address}\n\nPlease contact me to confirm availability and delivery details.`
+      );
+
+      window.location.href = `mailto:${shopEmail}?subject=${subject}&body=${body}`;
+    }
+
+    function submitOrderViaWhatsApp() {
+      const details = getFormDetails();
+      if(!details) return;
+
+      const whatsappNumber = "2348123456789"; 
+      const message = encodeURIComponent(
+        `*NEW PERFUME ORDER REQUEST*\n\n*Items Ordered:*\n${details.itemsList}\n\n*Total Amount:* $${details.total}\n\n*Customer Details:*\n- Name: ${details.name}\n- Phone: ${details.phone}\n- Email: ${details.email}\n- Address: ${details.address}`
+      );
+
+      window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
+    }
+
+    const cartModal = document.getElementById('cart-modal');
+    function openCart() { cartModal.classList.remove('hidden'); }
+    function closeCart() { cartModal.classList.add('hidden'); }
+
+    document.getElementById('open-cart-btn').addEventListener('click', openCart);
+    document.getElementById('close-cart-btn').addEventListener('click', closeCart);
+
+    // Initial setup
+    renderProducts(products);
+    updateSequence();
+    lucide.createIcons();
+  </script>
+</body>
+</html>
