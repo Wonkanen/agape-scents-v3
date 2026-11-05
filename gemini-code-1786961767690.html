@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scroll Animated Sequence</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #0d0d11;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Scroll container length dynamically calculated via JS */
+    .scroll-container {
+      position: relative;
+    }
+
+    /* Sticky viewport container */
+    .sticky-viewport {
+      position: sticky;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .sequence-player {
+      position: relative;
+      width: 90vw;
+      max-width: 960px;
+      aspect-ratio: 16 / 9;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .frame {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      opacity: 0;
+      will-change: opacity;
+    }
+
+    .frame.active {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="scroll-container" id="scrollContainer">
+    <div class="sticky-viewport">
+      <div class="sequence-player" id="player">
+        <!-- Frames inserted dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const frameCount = 300; // Updated to 300 frames
+    const targetFPS = 30;   // 1/30 second per frame
+    
+    // Pixels of scrolling distance per second of video animation
+    // Adjust this value to make scrolling faster or slower
+    const pixelsPerSecond = 800; 
+
+    const totalDurationSeconds = frameCount / targetFPS; // 10 seconds total
+    const totalScrollDistance = totalDurationSeconds * pixelsPerSecond;
+
+    const player = document.getElementById('player');
+    const scrollContainer = document.getElementById('scrollContainer');
+    
+    // Set total container height to account for full 10-second playback
+    scrollContainer.style.height = `${totalScrollDistance + window.innerHeight}px`;
+
+    const frames = [];
+
+    // Left-pad function (1 -> 001, 10 -> 010, 100 -> 100)
+    const pad = (num, size) => {
+      let s = num + "";
+      while (s.length < size) s = "0" + s;
+      return s;
+    };
+
+    const imageFolderPath = './'; 
+    const imagePrefix = 'ezgif-frame-';
+    const imageExtension = '.jpg';
+
+    // Preload and insert 300 frames
+    for (let i = 1; i <= frameCount; i++) {
+      const img = document.createElement('img');
+      img.src = `${imageFolderPath}${imagePrefix}${pad(i, 3)}${imageExtension}`;
+      img.alt = `Frame ${i}`;
+      img.className = `frame ${i === 1 ? 'active' : ''}`;
+      
+      player.appendChild(img);
+      frames.push(img);
+    }
+
+    let currentFrameIndex = 0;
+
+    function updateSequence() {
+      const containerRect = scrollContainer.getBoundingClientRect();
+      const maxScroll = containerRect.height - window.innerHeight;
+      const currentScroll = -containerRect.top;
+
+      let progress = Math.max(0, Math.min(1, currentScroll / maxScroll));
+
+      let frameIndex = Math.floor(progress * frameCount);
+      if (frameIndex >= frameCount) frameIndex = frameCount - 1;
+
+      if (frameIndex !== currentFrameIndex) {
+        frames[currentFrameIndex].classList.remove('active');
+        frames[frameIndex].classList.add('active');
+        currentFrameIndex = frameIndex;
+      }
+    }
+
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          updateSequence();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+
+    updateSequence();
+  </script>
+</body>
+</html>
